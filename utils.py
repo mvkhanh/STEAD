@@ -2,8 +2,10 @@ import numpy as np
 import torch
 from torch import nn
 import option
+import cv2
+from PIL import Image
 
-args=option.parse_args()
+# args=option.parse_args()
 
 
 def save_best_record(test_info, file_path):
