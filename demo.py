@@ -67,9 +67,9 @@ model.load_state_dict(torch.load('saved_models/888tiny.pkl', map_location=device
 model.eval()
 
 if __name__ == '__main__':
-    # Input shape: 16x3x224x224
+    # Input shape: 16x3xHxW
     # 16: số frame (không phải 32 như Uniformer32)
-    # 3x224x224: Channel x Width x Height: channel=3; width và height tuỳ ý, cứ giữ nguyên khi đọc từ video
+    # 3xHxW: Channel x Width x Height: channel=3; width và height tuỳ ý, cứ giữ nguyên khi đọc từ video
     t = torch.rand((16, 3, 224, 320)).to(device)
     
     t_transform = transform({'video' : t})['video']
