@@ -19,7 +19,7 @@ from pytorchvideo.data import LabeledVideoDataset, RandomClipSampler, UniformCli
 from torch.utils.data import DataLoader
 
 # Set to GPU or CPU
-device = 'mps' if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else 'cpu'
 model = model.eval()
 model = model.to(device)
 import os.path
