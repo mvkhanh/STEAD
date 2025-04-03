@@ -8,3 +8,4 @@ scikit-learn==1.5.1
 performer-pytorch
 umap
 opencv-python
+scikit-image

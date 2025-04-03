@@ -55,8 +55,8 @@ class Model(nn.Module):
         attn_dropout = 0.1,
         ff_mult = 1,
     ):
-        dims = (32, 32)
-        depths = (1, 1)
+        dims = (32, 32) # (192, 128)
+        depths = (1, 1) # (3, 3)
         block_types = ('c', 'a')
         super().__init__()
         self.init_dim, *_, last_dim = dims

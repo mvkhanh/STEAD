@@ -36,8 +36,13 @@ def test(dataloader, model, args, device = 'cuda', name = "training", main = Fal
         roc_auc = auc(fpr, tpr)
         precision, recall, th = precision_recall_curve(labels, pred)
         pr_auc = auc(recall, precision)
+        
         print('pr_auc : ' + str(pr_auc))
         print('roc_auc : ' + str(roc_auc))
+        
+        f1_scores = 2 * precision * recall / (precision + recall)
+        best_threshold = np.sqrt((1 - tpr) ** 2 + fpr ** 2)
+        print(f'Threshold: {threshold[np.argmin(best_threshold)]} {th[np.argmax(f1_scores)]}')
 
         if main:
             feats = np.array(feats)
@@ -59,12 +64,12 @@ def test(dataloader, model, args, device = 'cuda', name = "training", main = Fal
 
 if __name__ == '__main__':
     args = option.parse_args()
-    device = torch.device("cuda")   
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = Model()
     test_loader = DataLoader(Dataset(args, test_mode=True),
                               batch_size=args.batch_size, shuffle=False,
                               num_workers=0, pin_memory=False)
     model = model.to(device)
     summary(model, (1, 192, 16, 10, 10))
-    model_dict = model.load_state_dict(torch.load(MODEL_LOCATION + MODEL_NAME + MODEL_EXTENSION))
-    auc = test(test_loader, model, args, device, name = MODEL_NAME, main = True)
+    model_dict = model.load_state_dict(torch.load(MODEL_LOCATION + MODEL_NAME + MODEL_EXTENSION, map_location=device))
+    auc = test(test_loader, model, args, device, name = MODEL_NAME, main = False)

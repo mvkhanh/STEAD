@@ -25,7 +25,8 @@ class TripletLoss(nn.Module):
         n_d_max, _ = torch.max(n_d, dim=0)
         a_d_min, _ = torch.min(a_d, dim=0)
         a_d_min = margin - a_d_min
-        a_d_min = torch.max(torch.zeros(bs // 2).cuda(), a_d_min)
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        a_d_min = torch.max(torch.zeros(bs // 2).to(device), a_d_min)
         return torch.mean(n_d_max) + torch.mean(a_d_min)
 
 class Loss(torch.nn.Module):
@@ -45,6 +46,7 @@ def train(loader, model, optimizer, scheduler, device, epoch):
         model.train()
         pred = []
         label = []
+        loss_t = 0
         for step, (ninput, nlabel, ainput, alabel) in tqdm(enumerate(loader)):
             input = torch.cat((ninput, ainput), 0).to(device)
             
@@ -56,7 +58,7 @@ def train(loader, model, optimizer, scheduler, device, epoch):
             loss_criterion = Loss()
             loss_ce, loss_con = loss_criterion(scores.squeeze(), feats, labels)
             loss = loss_ce + loss_con
-
+            loss_t = loss
             optimizer.zero_grad()
             loss.backward()
 
@@ -68,4 +70,5 @@ def train(loader, model, optimizer, scheduler, device, epoch):
         pr_auc = auc(recall, precision)
         print('train_pr_auc : ' + str(pr_auc))
         print('train_roc_auc : ' + str(roc_auc))
+        print(loss_t)
         return  loss.item()
